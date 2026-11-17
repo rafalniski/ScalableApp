@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 sealed interface RepoDetailUiState {
     data object Loading : RepoDetailUiState
@@ -72,7 +73,7 @@ class RepoDetailViewModel(
         var index = 0
         while (true) {
             emit(index)
-            delay(MONTH_DISPLAY_MILLIS)
+            delay(MONTH_DISPLAY_MILLIS.milliseconds)
             val isLastMonth = index == monthCount - 1
             index = if (isLastMonth) 0 else index + 1
         }
