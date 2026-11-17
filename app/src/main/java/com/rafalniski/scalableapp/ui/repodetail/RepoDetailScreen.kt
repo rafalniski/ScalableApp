@@ -1,6 +1,9 @@
 package com.rafalniski.scalableapp.ui.repodetail
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,10 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rafalniski.scalableapp.R
 import com.rafalniski.scalableapp.domain.Commit
+import com.rafalniski.scalableapp.ui.components.CommitActivityBar
 import com.rafalniski.scalableapp.ui.components.LoadingView
 import com.rafalniski.scalableapp.ui.components.MessageView
 import java.time.ZoneId
@@ -25,6 +30,7 @@ import java.time.format.FormatStyle
 
 private val dateFormatter =
     DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withZone(ZoneId.systemDefault())
+private val monthFormatter = DateTimeFormatter.ofPattern("MMM yyyy")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,12 +44,22 @@ fun RepoDetailScreen(
         when (val state = uiState) {
             RepoDetailUiState.Loading -> LoadingView(modifier)
             RepoDetailUiState.Error -> MessageView(stringResource(R.string.repo_detail_error), modifier)
-            is RepoDetailUiState.Content ->
-                if (state.commits.isEmpty()) {
+            is RepoDetailUiState.Content -> {
+                val month = state.currentMonth
+                if (month == null) {
                     MessageView(stringResource(R.string.repo_detail_empty), modifier)
                 } else {
-                    CommitList(state.commits, modifier)
+                    Column(modifier) {
+                        CommitActivityBar(
+                            monthLabel = monthFormatter.format(month.month),
+                            count = month.count,
+                            maxCount = state.maxCount,
+                            modifier = Modifier.fillMaxWidth().height(200.dp).padding(16.dp),
+                        )
+                        CommitList(state.commits, Modifier.weight(1f))
+                    }
                 }
+            }
         }
     }
 }
