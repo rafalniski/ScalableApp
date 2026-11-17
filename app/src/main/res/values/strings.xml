@@ -2,4 +2,6 @@
     <string name="app_name">ScalableApp</string>
     <string name="repo_list_error">Could not load repositories</string>
     <string name="repo_list_empty">No repositories</string>
+    <string name="repo_detail_error">Could not load commits</string>
+    <string name="repo_detail_empty">No commits</string>
 </resources>
