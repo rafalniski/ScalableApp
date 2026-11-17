@@ -1,6 +1,7 @@
 # ScalableApp
 
 ## How to run
+Requires Android Studio Rabbit 2 (2026.2.2) or newer (AGP 9.5).
 Open in Android Studio and run `app`. Unit tests: `./gradlew testDebugUnitTest`.
 
 ## Not done
