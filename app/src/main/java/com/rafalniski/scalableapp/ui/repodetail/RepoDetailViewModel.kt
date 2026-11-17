@@ -25,15 +25,12 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 
 sealed interface RepoDetailUiState {
     data object Loading : RepoDetailUiState
     data object Error : RepoDetailUiState
     data class Content(
         val commits: List<Commit>,
-        /** Month currently shown by the activity bar; null when there are no commits. */
         val currentMonth: MonthlyCommitCount?,
         val maxCount: Int,
     ) : RepoDetailUiState
@@ -43,12 +40,10 @@ class RepoDetailViewModel(
     repository: GitHubRepository,
     owner: String,
     val repoName: String,
-    private val monthInterval: Duration = 1500.milliseconds,
 ) : ViewModel() {
 
     private val commits = MutableStateFlow<Result<List<Commit>>?>(null)
 
-    /** Cycles through months only while collected, i.e. while the screen is visible. */
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<RepoDetailUiState> = commits
         .flatMapLatest { result ->
@@ -77,12 +72,15 @@ class RepoDetailViewModel(
         var index = 0
         while (true) {
             emit(index)
-            delay(monthInterval)
-            index = (index + 1) % monthCount
+            delay(MONTH_DISPLAY_MILLIS)
+            val isLastMonth = index == monthCount - 1
+            index = if (isLastMonth) 0 else index + 1
         }
     }
 
     companion object {
+        private const val MONTH_DISPLAY_MILLIS = 1500L
+
         val Factory = viewModelFactory {
             initializer {
                 val app = this[APPLICATION_KEY] as ScalableApplication

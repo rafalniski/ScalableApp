@@ -7,6 +7,7 @@ import com.rafalniski.scalableapp.domain.MonthlyCommitCount
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
@@ -78,7 +79,7 @@ class RepoDetailViewModelTest {
 
     private fun TestScope.collectedViewModel(): RepoDetailViewModel {
         val viewModel = RepoDetailViewModel(repository, "owner", "repo")
-        backgroundScope.launch(mainDispatcherRule.dispatcher) { viewModel.uiState.collect {} }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
         return viewModel
     }
 

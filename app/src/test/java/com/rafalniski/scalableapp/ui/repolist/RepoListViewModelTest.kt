@@ -19,7 +19,7 @@ class RepoListViewModelTest {
     fun `shows repos when loading succeeds`() {
         repository.repos = listOf(Repo(owner = "owner", name = "repo"))
 
-        val viewModel = RepoListViewModel(repository, "owner")
+        val viewModel = RepoListViewModel(repository)
 
         assertEquals(RepoListUiState.Content(repository.repos), viewModel.uiState.value)
     }
@@ -28,7 +28,7 @@ class RepoListViewModelTest {
     fun `shows error when loading fails`() {
         repository.error = IOException()
 
-        val viewModel = RepoListViewModel(repository, "owner")
+        val viewModel = RepoListViewModel(repository)
 
         assertEquals(RepoListUiState.Error, viewModel.uiState.value)
     }

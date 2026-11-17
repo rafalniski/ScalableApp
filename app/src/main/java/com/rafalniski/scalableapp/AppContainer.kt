@@ -11,11 +11,11 @@ import retrofit2.create
 
 class AppContainer {
 
+    private val json = Json { ignoreUnknownKeys = true }
+
     private val api: GitHubApi = Retrofit.Builder()
         .baseUrl("https://api.github.com/")
-        .addConverterFactory(
-            Json { ignoreUnknownKeys = true }.asConverterFactory("application/json".toMediaType()),
-        )
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
         .create()
 

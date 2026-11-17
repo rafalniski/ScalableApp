@@ -15,13 +15,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
-/** Vertical bar whose height is [count] relative to [maxCount], with the count on top and [monthLabel] below. */
 @Composable
 fun CommitActivityBar(monthLabel: String, count: Int, maxCount: Int, modifier: Modifier = Modifier) {
-    val heightFraction by animateFloatAsState(
-        targetValue = if (maxCount > 0) count.toFloat() / maxCount else 0f,
-        label = "barHeight",
-    )
+    val heightFraction by animateFloatAsState(if (maxCount > 0) count.toFloat() / maxCount else 0f)
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Column(
             modifier = Modifier.weight(1f),

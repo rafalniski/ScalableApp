@@ -18,8 +18,7 @@ class GitHubRepositoryImpl(private val api: GitHubApi) : GitHubRepository {
         try {
             api.getCommits(owner, repo).map { it.toDomain() }
         } catch (e: HttpException) {
-            // GitHub responds with 409 Conflict for a repository without commits.
-            if (e.code() == HTTP_CONFLICT) emptyList() else throw e
+            if (e.code() == EMPTY_REPOSITORY_STATUS) emptyList() else throw e
         }
 
     private fun RepoDto.toDomain() = Repo(owner = owner.login, name = name)
@@ -32,6 +31,6 @@ class GitHubRepositoryImpl(private val api: GitHubApi) : GitHubRepository {
     )
 
     private companion object {
-        const val HTTP_CONFLICT = 409
+        const val EMPTY_REPOSITORY_STATUS = 409
     }
 }

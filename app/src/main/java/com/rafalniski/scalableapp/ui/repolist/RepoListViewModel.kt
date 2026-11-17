@@ -21,14 +21,14 @@ sealed interface RepoListUiState {
     data class Content(val repos: List<Repo>) : RepoListUiState
 }
 
-class RepoListViewModel(repository: GitHubRepository, username: String) : ViewModel() {
+class RepoListViewModel(repository: GitHubRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow<RepoListUiState>(RepoListUiState.Loading)
     val uiState: StateFlow<RepoListUiState> = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
-            _uiState.value = runCatching { repository.getRepos(username) }.fold(
+            _uiState.value = runCatching { repository.getRepos(GITHUB_USERNAME) }.fold(
                 onSuccess = { RepoListUiState.Content(it) },
                 onFailure = { RepoListUiState.Error },
             )
@@ -39,7 +39,7 @@ class RepoListViewModel(repository: GitHubRepository, username: String) : ViewMo
         val Factory = viewModelFactory {
             initializer {
                 val app = this[APPLICATION_KEY] as ScalableApplication
-                RepoListViewModel(app.container.gitHubRepository, GITHUB_USERNAME)
+                RepoListViewModel(app.container.gitHubRepository)
             }
         }
     }
