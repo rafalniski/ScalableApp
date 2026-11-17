@@ -12,7 +12,7 @@ data class OwnerDto(val login: String)
 data class CommitDto(val sha: String, val commit: CommitDetailsDto)
 
 @Serializable
-data class CommitDetailsDto(val message: String, val author: AuthorDto)
+data class CommitDetailsDto(val message: String, val author: AuthorDto? = null)
 
 @Serializable
-data class AuthorDto(val name: String, val date: String)
+data class AuthorDto(val name: String? = null, val date: String? = null)

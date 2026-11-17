@@ -16,19 +16,24 @@ class GitHubRepositoryImpl(private val api: GitHubApi) : GitHubRepository {
 
     override suspend fun getCommits(owner: String, repo: String): List<Commit> =
         try {
-            api.getCommits(owner, repo).map { it.toDomain() }
+            api.getCommits(owner, repo).mapNotNull { it.toDomain() }
         } catch (e: HttpException) {
             if (e.code() == EMPTY_REPOSITORY_STATUS) emptyList() else throw e
         }
 
     private fun RepoDto.toDomain() = Repo(owner = owner.login, name = name)
 
-    private fun CommitDto.toDomain() = Commit(
-        sha = sha,
-        message = commit.message.lineSequence().first(),
-        author = commit.author.name,
-        date = Instant.parse(commit.author.date),
-    )
+    private fun CommitDto.toDomain(): Commit? {
+        val author = commit.author ?: return null
+        val authorName = author.name ?: return null
+        val authorDate = author.date ?: return null
+        return Commit(
+            sha = sha,
+            message = commit.message.lineSequence().first(),
+            author = authorName,
+            date = Instant.parse(authorDate),
+        )
+    }
 
     private companion object {
         const val EMPTY_REPOSITORY_STATUS = 409

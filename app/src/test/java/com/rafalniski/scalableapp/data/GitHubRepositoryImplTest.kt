@@ -52,6 +52,17 @@ class GitHubRepositoryImplTest {
     }
 
     @Test
+    fun `skips commits without author name or date`() = runTest {
+        api.commits = listOf(
+            CommitDto(sha = "1", commit = CommitDetailsDto(message = "", author = null)),
+            CommitDto(sha = "2", commit = CommitDetailsDto(message = "", author = AuthorDto(name = "Alex"))),
+            CommitDto(sha = "3", commit = CommitDetailsDto(message = "", author = AuthorDto(date = "2024-03-01T10:00:00Z"))),
+        )
+
+        assertEquals(emptyList<Commit>(), repository.getCommits("owner", "repo"))
+    }
+
+    @Test
     fun `returns no commits for an empty repository`() = runTest {
         api.error = httpError(409)
 
