@@ -22,7 +22,7 @@ fun AppNavHost() {
             RepoListScreen(onRepoClick = { navController.navigate(RepoDetail(it.owner, it.name)) })
         }
         composable<RepoDetail> {
-            RepoDetailScreen()
+            RepoDetailScreen(onBack = { navController.navigateUp() })
         }
     }
 }

@@ -4,4 +4,5 @@
     <string name="repo_list_empty">No repositories</string>
     <string name="repo_detail_error">Could not load commits</string>
     <string name="repo_detail_empty">No commits</string>
+    <string name="back">Back</string>
 </resources>
