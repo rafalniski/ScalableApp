@@ -8,3 +8,4 @@ Open in Android Studio and run `app`. Unit tests: `./gradlew testDebugUnitTest`.
 - Pagination: only the first API page is loaded (30 repos, 30 commits).
 - Error handling: generic message only, no retry or rate-limit handling.
 - UI tests.
+- Pixel-perfect design: the focus was on functionality, UI uses default Material 3 styling.
