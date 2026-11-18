@@ -4,12 +4,14 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.Instant
 import java.time.YearMonth
+import java.time.ZoneId
+import java.time.ZoneOffset
 
 class MonthlyCommitAggregatorTest {
 
     @Test
     fun `returns no months for no commits`() {
-        assertEquals(emptyList<MonthlyCommitCount>(), aggregateByMonth(emptyList()))
+        assertEquals(emptyList<MonthlyCommitCount>(), aggregateByMonth(emptyList(), ZoneOffset.UTC))
     }
 
     @Test
@@ -24,21 +26,15 @@ class MonthlyCommitAggregatorTest {
             MonthlyCommitCount(YearMonth.of(2024, 1), 1),
             MonthlyCommitCount(YearMonth.of(2024, 3), 2),
         )
-        assertEquals(expected, aggregateByMonth(commits))
+        assertEquals(expected, aggregateByMonth(commits, ZoneOffset.UTC))
     }
 
     @Test
-    fun `groups by month in UTC`() {
-        val commits = listOf(
-            commitAt("2024-01-31T23:59:59Z"),
-            commitAt("2024-02-01T00:00:00Z"),
-        )
+    fun `groups by month in the given time zone`() {
+        val commits = listOf(commitAt("2024-01-31T23:30:00Z"))
 
-        val expected = listOf(
-            MonthlyCommitCount(YearMonth.of(2024, 1), 1),
-            MonthlyCommitCount(YearMonth.of(2024, 2), 1),
-        )
-        assertEquals(expected, aggregateByMonth(commits))
+        val expected = listOf(MonthlyCommitCount(YearMonth.of(2024, 2), 1))
+        assertEquals(expected, aggregateByMonth(commits, ZoneId.of("Europe/Warsaw")))
     }
 
     private fun commitAt(date: String) =

@@ -77,11 +77,24 @@ class RepoDetailViewModelTest {
         assertEquals(YearMonth.of(2024, 1), viewModel.currentMonth()?.month)
     }
 
-    private fun TestScope.collectedViewModel(): RepoDetailViewModel {
+    @Test
+    fun `keeps the current month when the screen briefly stops collecting`() = runTest {
+        repository.commits = listOf(january, february)
         val viewModel = RepoDetailViewModel(repository, "owner", "repo")
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
-        return viewModel
+        val screen = collect(viewModel)
+        nextMonth()
+
+        screen.cancel()
+        collect(viewModel)
+
+        assertEquals(YearMonth.of(2024, 2), viewModel.currentMonth()?.month)
     }
+
+    private fun TestScope.collectedViewModel() =
+        RepoDetailViewModel(repository, "owner", "repo").also { collect(it) }
+
+    private fun TestScope.collect(viewModel: RepoDetailViewModel) =
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
 
     private fun TestScope.nextMonth() {
         advanceTimeBy(1500)

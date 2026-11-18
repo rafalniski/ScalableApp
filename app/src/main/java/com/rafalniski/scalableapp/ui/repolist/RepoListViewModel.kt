@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.rafalniski.scalableapp.ScalableApplication
 import com.rafalniski.scalableapp.domain.GitHubRepository
 import com.rafalniski.scalableapp.domain.Repo
+import com.rafalniski.scalableapp.ui.runCatchingCancellable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,7 +29,7 @@ class RepoListViewModel(repository: GitHubRepository) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            _uiState.value = runCatching { repository.getRepos(GITHUB_USERNAME) }.fold(
+            _uiState.value = runCatchingCancellable { repository.getRepos(GITHUB_USERNAME) }.fold(
                 onSuccess = { RepoListUiState.Content(it) },
                 onFailure = { RepoListUiState.Error },
             )

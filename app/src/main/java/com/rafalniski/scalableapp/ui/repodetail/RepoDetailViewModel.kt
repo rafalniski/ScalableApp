@@ -13,6 +13,7 @@ import com.rafalniski.scalableapp.domain.GitHubRepository
 import com.rafalniski.scalableapp.domain.MonthlyCommitCount
 import com.rafalniski.scalableapp.domain.aggregateByMonth
 import com.rafalniski.scalableapp.ui.RepoDetail
+import com.rafalniski.scalableapp.ui.runCatchingCancellable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.ZoneId
 import kotlin.time.Duration.Companion.milliseconds
 
 sealed interface RepoDetailUiState {
@@ -54,16 +56,16 @@ class RepoDetailViewModel(
                 else -> contentFlow(result.getOrThrow())
             }
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), RepoDetailUiState.Loading)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), RepoDetailUiState.Loading)
 
     init {
         viewModelScope.launch {
-            commits.value = runCatching { repository.getCommits(owner, repoName) }
+            commits.value = runCatchingCancellable { repository.getCommits(owner, repoName) }
         }
     }
 
     private fun contentFlow(commits: List<Commit>): Flow<RepoDetailUiState> {
-        val months = aggregateByMonth(commits)
+        val months = aggregateByMonth(commits, ZoneId.systemDefault())
         val maxCount = months.maxOfOrNull { it.count } ?: 0
         if (months.isEmpty()) return flowOf(RepoDetailUiState.Content(commits, null, maxCount))
         return monthIndices(months.size).map { RepoDetailUiState.Content(commits, months[it], maxCount) }
@@ -81,6 +83,7 @@ class RepoDetailViewModel(
 
     companion object {
         private const val MONTH_DISPLAY_MILLIS = 1500L
+        private const val STOP_TIMEOUT_MILLIS = 5000L
 
         val Factory = viewModelFactory {
             initializer {
