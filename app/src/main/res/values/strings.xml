@@ -5,4 +5,8 @@
     <string name="repo_detail_error">Could not load commits</string>
     <string name="repo_detail_empty">No commits</string>
     <string name="back">Back</string>
+    <plurals name="commit_count">
+        <item quantity="one">%d commit</item>
+        <item quantity="other">%d commits</item>
+    </plurals>
 </resources>
