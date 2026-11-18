@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rafalniski.scalableapp.R
@@ -50,6 +51,8 @@ private fun RepoList(repos: List<Repo>, onRepoClick: (Repo) -> Unit, modifier: M
         items(repos, key = { it.name }) { repo ->
             ListItem(
                 headlineContent = { Text(repo.name) },
+                supportingContent = repo.description?.let { { Text(it, maxLines = 2, overflow = TextOverflow.Ellipsis) } },
+                trailingContent = { Text(listOfNotNull(repo.language, "★ ${repo.stars}").joinToString(" · ")) },
                 modifier = Modifier.clickable { onRepoClick(repo) },
             )
         }

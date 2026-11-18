@@ -17,7 +17,7 @@ class RepoListViewModelTest {
 
     @Test
     fun `shows repos when loading succeeds`() {
-        repository.repos = listOf(Repo(owner = "owner", name = "repo"))
+        repository.repos = listOf(Repo(owner = "owner", name = "repo", description = null, language = null, stars = 0))
 
         val viewModel = RepoListViewModel(repository)
 

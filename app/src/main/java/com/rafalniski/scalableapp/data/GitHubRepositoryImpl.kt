@@ -21,7 +21,13 @@ class GitHubRepositoryImpl(private val api: GitHubApi) : GitHubRepository {
             if (e.code() == EMPTY_REPOSITORY_STATUS) emptyList() else throw e
         }
 
-    private fun RepoDto.toDomain() = Repo(owner = owner.login, name = name)
+    private fun RepoDto.toDomain() = Repo(
+        owner = owner.login,
+        name = name,
+        description = description,
+        language = language,
+        stars = stargazersCount,
+    )
 
     private fun CommitDto.toDomain(): Commit? {
         val author = commit.author ?: return null

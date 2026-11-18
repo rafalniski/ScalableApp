@@ -3,7 +3,13 @@ package com.rafalniski.scalableapp.domain
 import java.time.Instant
 import java.time.YearMonth
 
-data class Repo(val owner: String, val name: String)
+data class Repo(
+    val owner: String,
+    val name: String,
+    val description: String?,
+    val language: String?,
+    val stars: Int,
+)
 
 data class Commit(
     val sha: String,

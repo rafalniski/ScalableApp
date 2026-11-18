@@ -1,9 +1,16 @@
 package com.rafalniski.scalableapp.data.remote
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RepoDto(val name: String, val owner: OwnerDto)
+data class RepoDto(
+    val name: String,
+    val owner: OwnerDto,
+    val description: String? = null,
+    val language: String? = null,
+    @SerialName("stargazers_count") val stargazersCount: Int,
+)
 
 @Serializable
 data class OwnerDto(val login: String)

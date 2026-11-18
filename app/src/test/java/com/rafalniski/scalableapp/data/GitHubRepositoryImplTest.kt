@@ -25,9 +25,24 @@ class GitHubRepositoryImplTest {
 
     @Test
     fun `maps repos to domain`() = runTest {
-        api.repos = listOf(RepoDto(name = "repo", owner = OwnerDto(login = "owner")))
+        api.repos = listOf(
+            RepoDto(
+                name = "repo",
+                owner = OwnerDto(login = "owner"),
+                description = "Description",
+                language = "Kotlin",
+                stargazersCount = 7,
+            ),
+        )
 
-        assertEquals(listOf(Repo(owner = "owner", name = "repo")), repository.getRepos("owner"))
+        val expected = Repo(
+            owner = "owner",
+            name = "repo",
+            description = "Description",
+            language = "Kotlin",
+            stars = 7,
+        )
+        assertEquals(listOf(expected), repository.getRepos("owner"))
     }
 
     @Test
